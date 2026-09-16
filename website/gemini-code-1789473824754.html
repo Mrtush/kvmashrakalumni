@@ -1,0 +1,1471 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>KV Mashrak — Alumni, Juniors & Teachers Portal</title>
+
+  <!-- Tailwind CSS & Google Fonts -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;1,400&display=swap" rel="stylesheet">
+  
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+            serif: ['"Playfair Display"', 'serif'],
+          },
+          colors: {
+            clay: {
+              50: '#FAF7F5',
+              100: '#F4EFEA',
+              200: '#E8DFD8',
+              300: '#D6C8BE',
+              500: '#A48F80',
+              700: '#6B584C',
+              800: '#4A3B32',
+              900: '#2E231C',
+            },
+            terracotta: {
+              DEFAULT: '#C86D51',
+              dark: '#A85339',
+              light: '#F8ECE8',
+            },
+            juniors: {
+              DEFAULT: '#059669',
+              dark: '#047857',
+              light: '#ECFDF5',
+            },
+            teachers: {
+              DEFAULT: '#2563EB',
+              dark: '#1D4ED8',
+              light: '#EFF6FF',
+            },
+            instaPink: '#E1306C'
+          },
+          boxShadow: {
+            'clay-card': '8px 8px 18px #d9d0c7, -8px -8px 18px #ffffff',
+            'clay-card-sm': '5px 5px 12px #ded5cc, -5px -5px 12px #ffffff',
+            'clay-inset': 'inset 4px 4px 8px #d9d0c7, inset -4px -4px 8px #ffffff',
+            'clay-btn': '6px 6px 14px #ded5cc, -6px -6px 14px #ffffff',
+            'clay-btn-active': 'inset 3px 3px 6px #bfb6ad, inset -3px -3px 6px #ffffff',
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body {
+      background-color: #F4EFEA;
+    }
+    .segment-tab.active-alumni {
+      background-color: #C86D51;
+      color: #ffffff;
+      box-shadow: 0 4px 14px rgba(200, 109, 81, 0.35);
+    }
+    .segment-tab.active-junior {
+      background-color: #059669;
+      color: #ffffff;
+      box-shadow: 0 4px 14px rgba(5, 150, 105, 0.35);
+    }
+    .segment-tab.active-teacher {
+      background-color: #2563EB;
+      color: #ffffff;
+      box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35);
+    }
+  </style>
+</head>
+<body class="font-sans text-clay-900 min-h-screen antialiased">
+
+  <!-- ================= MANDATORY ENTRY MODAL ================= -->
+  <div id="firstTimeVisitorModal" class="fixed inset-0 z-50 bg-clay-900/60 backdrop-blur-md flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl p-6 sm:p-10 max-w-xl w-full shadow-clay-card border-2 border-white relative max-h-[92vh] overflow-y-auto">
+      
+      <div class="text-center space-y-2 mb-6">
+        <div class="w-14 h-14 rounded-2xl bg-terracotta-light text-terracotta shadow-clay-card-sm flex items-center justify-center mx-auto border border-white">
+          <i data-lucide="graduation-cap" class="w-8 h-8"></i>
+        </div>
+        <h2 class="text-2xl sm:text-3xl font-serif font-bold text-clay-900">Welcome to KV Mashrak Alumni Portal</h2>
+        <p class="text-xs sm:text-sm text-clay-600">Register as a Senior Alumnus, Junior Student, or Faculty Member to generate your digital card.</p>
+      </div>
+
+      <form id="onboardingForm" onsubmit="handleOnboardingSubmit(event)" class="space-y-4">
+        
+        <!-- 3-Way Segment Selector -->
+        <div>
+          <label class="block text-xs font-bold text-clay-700 mb-1 uppercase">I am a *</label>
+          <div class="grid grid-cols-3 gap-2">
+            <label class="cursor-pointer">
+              <input type="radio" name="userSegment" value="ALUMNI" checked onchange="toggleFormFields()" class="peer sr-only">
+              <div class="p-2.5 text-center rounded-2xl bg-clay-50 border-2 border-transparent peer-checked:border-terracotta peer-checked:bg-terracotta-light peer-checked:text-terracotta font-bold text-[11px] sm:text-xs shadow-clay-inset transition-all">
+                🎓 Alumni / Senior
+              </div>
+            </label>
+            <label class="cursor-pointer">
+              <input type="radio" name="userSegment" value="JUNIOR" onchange="toggleFormFields()" class="peer sr-only">
+              <div class="p-2.5 text-center rounded-2xl bg-clay-50 border-2 border-transparent peer-checked:border-juniors peer-checked:bg-juniors-light peer-checked:text-juniors font-bold text-[11px] sm:text-xs shadow-clay-inset transition-all">
+                🎒 Junior Student
+              </div>
+            </label>
+            <label class="cursor-pointer">
+              <input type="radio" name="userSegment" value="TEACHER" onchange="toggleFormFields()" class="peer sr-only">
+              <div class="p-2.5 text-center rounded-2xl bg-clay-50 border-2 border-transparent peer-checked:border-teachers peer-checked:bg-teachers-light peer-checked:text-teachers font-bold text-[11px] sm:text-xs shadow-clay-inset transition-all">
+                👨‍🏫 Faculty / Teacher
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <!-- Full Name -->
+        <div>
+          <label class="block text-xs font-bold text-clay-700 mb-1 uppercase">Full Name *</label>
+          <input type="text" id="obName" required class="w-full px-4 py-2.5 rounded-xl bg-clay-50 shadow-clay-inset border border-clay-200 text-sm focus:outline-none focus:ring-2 focus:ring-terracotta text-clay-900" placeholder="e.g. Dr. Rajesh Sharma / Rahul Kumar">
+        </div>
+
+        <!-- 1. ALUMNI SPECIFIC FIELDS -->
+        <div id="alumniFields" class="space-y-4">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-bold text-clay-700 mb-1 uppercase">Registered Class *</label>
+              <select id="obSeniorClassLevel" onchange="toggleStreamField()" class="w-full px-4 py-2.5 rounded-xl bg-clay-50 shadow-clay-inset border border-clay-200 text-sm font-semibold text-clay-900 focus:outline-none">
+                <option value="12">Class 12th (Senior Sec.)</option>
+                <option value="10">Class 10th (Secondary)</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-clay-700 mb-1 uppercase">Passing Batch Year *</label>
+              <input type="number" id="obBatch" min="2002" max="2026" class="w-full px-4 py-2.5 rounded-xl bg-clay-50 shadow-clay-inset border border-clay-200 text-sm focus:outline-none text-clay-900" placeholder="e.g. 2022">
+            </div>
+          </div>
+
+          <div id="streamFieldContainer">
+            <label class="block text-xs font-bold text-terracotta mb-1 uppercase flex items-center gap-1.5">
+              <i data-lucide="sparkles" class="w-3.5 h-3.5"></i> Class 12 Stream *
+            </label>
+            <select id="obSeniorStream" class="w-full px-4 py-2.5 rounded-xl bg-terracotta-light shadow-clay-inset border border-terracotta/40 text-sm font-bold text-terracotta-dark focus:outline-none">
+              <option value="Science (PCM)">Science (PCM - Physics, Chem, Math)</option>
+              <option value="Science (PCB)">Science (PCB - Physics, Chem, Bio)</option>
+              <option value="Commerce">Commerce</option>
+              <option value="Arts / Humanities">Arts / Humanities</option>
+            </select>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-bold text-clay-700 mb-1 uppercase">Current Occupation</label>
+              <input type="text" id="obSeniorRole" class="w-full px-4 py-2.5 rounded-xl bg-clay-50 shadow-clay-inset border border-clay-200 text-sm focus:outline-none text-clay-900" placeholder="e.g. Software Engineer / Student">
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-clay-700 mb-1 uppercase">Current City</label>
+              <input type="text" id="obSeniorCity" class="w-full px-4 py-2.5 rounded-xl bg-clay-50 shadow-clay-inset border border-clay-200 text-sm focus:outline-none text-clay-900" placeholder="Patna / Delhi">
+            </div>
+          </div>
+        </div>
+
+        <!-- 2. JUNIOR SPECIFIC FIELDS -->
+        <div id="juniorFields" class="hidden space-y-4">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-bold text-clay-700 mb-1 uppercase">Current Class *</label>
+              <select id="obJuniorClass" class="w-full px-4 py-2.5 rounded-xl bg-clay-50 shadow-clay-inset border border-clay-200 text-sm font-semibold text-clay-900 focus:outline-none">
+                <option value="Class 11">Class 11</option>
+                <option value="Class 10">Class 10</option>
+                <option value="Class 9">Class 9</option>
+                <option value="Class 8">Class 8</option>
+                <option value="Class 7">Class 7</option>
+                <option value="Class 6">Class 6</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-clay-700 mb-1 uppercase">Section & House</label>
+              <input type="text" id="obJuniorSection" class="w-full px-4 py-2.5 rounded-xl bg-clay-50 shadow-clay-inset border border-clay-200 text-sm focus:outline-none text-clay-900" placeholder="Sec A (Shivaji House)">
+            </div>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-clay-700 mb-1 uppercase">Ambition / Dream Career</label>
+            <input type="text" id="obJuniorGoal" class="w-full px-4 py-2.5 rounded-xl bg-clay-50 shadow-clay-inset border border-clay-200 text-sm focus:outline-none text-clay-900" placeholder="e.g. Doctor, IITian, NDA">
+          </div>
+        </div>
+
+        <!-- 3. TEACHER SPECIFIC FIELDS -->
+        <div id="teacherFields" class="hidden space-y-4">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-bold text-teachers-dark mb-1 uppercase">Designation / Role *</label>
+              <select id="obTeacherRole" class="w-full px-4 py-2.5 rounded-xl bg-teachers-light shadow-clay-inset border border-teachers/30 text-sm font-bold text-teachers-dark focus:outline-none">
+                <option value="PGT (Post Graduate Teacher)">PGT (Class 11-12)</option>
+                <option value="TGT (Trained Graduate Teacher)">TGT (Class 6-10)</option>
+                <option value="PRT (Primary Teacher)">PRT (Primary)</option>
+                <option value="Principal / Vice Principal">Principal / Vice Principal</option>
+                <option value="Computer / Lab Faculty">Computer / Lab Instructor</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-teachers-dark mb-1 uppercase">Subject Taught *</label>
+              <input type="text" id="obTeacherSubject" class="w-full px-4 py-2.5 rounded-xl bg-teachers-light shadow-clay-inset border border-teachers/30 text-sm font-semibold text-teachers-dark focus:outline-none" placeholder="e.g. Physics / Mathematics / English">
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-bold text-clay-700 mb-1 uppercase">Service Year (From) *</label>
+              <input type="number" id="obTeacherFrom" min="2002" max="2026" class="w-full px-4 py-2.5 rounded-xl bg-clay-50 shadow-clay-inset border border-clay-200 text-sm focus:outline-none text-clay-900" placeholder="e.g. 2012">
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-clay-700 mb-1 uppercase">Service Year (To) *</label>
+              <input type="text" id="obTeacherTo" class="w-full px-4 py-2.5 rounded-xl bg-clay-50 shadow-clay-inset border border-clay-200 text-sm focus:outline-none text-clay-900" placeholder="e.g. 2020 or Present">
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-bold text-clay-700 mb-1 uppercase">Contract / Service Type</label>
+              <select id="obTeacherContractType" class="w-full px-4 py-2.5 rounded-xl bg-clay-50 shadow-clay-inset border border-clay-200 text-sm focus:outline-none">
+                <option value="Permanent KVS Staff">Permanent KVS Staff</option>
+                <option value="Contractual Faculty">Contractual Faculty</option>
+                <option value="Former Faculty (Retired/Transferred)">Retired / Transferred</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-clay-700 mb-1 uppercase">Contact Email / Phone</label>
+              <input type="text" id="obTeacherContact" class="w-full px-4 py-2.5 rounded-xl bg-clay-50 shadow-clay-inset border border-clay-200 text-sm focus:outline-none text-clay-900" placeholder="Phone or email for students">
+            </div>
+          </div>
+        </div>
+
+        <!-- Common Photo & Quote -->
+        <div>
+          <label class="block text-xs font-bold text-clay-700 mb-1 uppercase">Photo (Upload)</label>
+          <input type="file" id="obPhoto" accept="image/*" class="w-full text-xs text-clay-500 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-clay-200 file:text-clay-800 hover:file:bg-clay-300 cursor-pointer">
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-clay-700 mb-1 uppercase">School Memory / Message to Students</label>
+          <textarea id="obQuote" rows="2" class="w-full px-4 py-2 rounded-xl bg-clay-50 shadow-clay-inset border border-clay-200 text-sm focus:outline-none text-clay-900" placeholder="Memories of morning assemblies, football ground, messages for students..."></textarea>
+        </div>
+
+        <div class="pt-2">
+          <button type="submit" class="w-full py-3.5 rounded-2xl bg-terracotta text-white font-bold text-sm shadow-clay-btn hover:bg-terracotta-dark transition-all flex items-center justify-center gap-2">
+            <span>Enter KV Mashrak Portal</span>
+            <i data-lucide="arrow-right" class="w-4 h-4"></i>
+          </button>
+          <button type="button" onclick="bypassOnboarding()" class="w-full mt-2 text-xs text-clay-500 hover:text-clay-800 font-medium py-1">
+            Browse as Guest
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ================= TOP NAVIGATION ================= -->
+  <header class="sticky top-0 z-40 bg-clay-100/90 backdrop-blur-md border-b border-clay-200">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+      
+      <a href="#" class="flex items-center space-x-3.5">
+        <div class="w-12 h-12 rounded-2xl bg-white shadow-clay-card-sm flex items-center justify-center border border-white">
+          <i data-lucide="graduation-cap" class="w-6 h-6 text-terracotta"></i>
+        </div>
+        <div>
+          <span class="text-xs font-bold tracking-widest text-clay-500 uppercase block">Kendriya Vidyalaya Mashrak</span>
+          <h1 class="text-lg sm:text-xl font-extrabold text-clay-900 tracking-tight">KVM Alumni Portal</h1>
+        </div>
+      </a>
+
+      <!-- Quick Nav Links -->
+      <nav class="hidden md:flex items-center space-x-7 text-sm font-semibold text-clay-700">
+        <a href="#portal-segments" class="hover:text-terracotta transition-colors">Segments</a>
+        <a href="#leadership-section" class="hover:text-terracotta transition-colors">Leadership & Council</a>
+        <a href="#about-us" class="hover:text-terracotta transition-colors">About Us</a>
+        <a href="#insta-feed" class="hover:text-instaPink transition-colors">School Gram</a>
+        <a href="#contact-us" class="hover:text-terracotta transition-colors">Contact</a>
+      </nav>
+
+      <!-- Badge & Action -->
+      <div class="flex items-center space-x-3">
+        <div id="userBadge" class="hidden items-center gap-2 px-3 py-1.5 rounded-xl bg-white shadow-clay-card-sm border border-clay-200 text-xs">
+          <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+          <span id="userBadgeName" class="font-bold text-clay-900">User</span>
+          <span id="userBadgeTag" class="text-[10px] text-terracotta font-bold"></span>
+        </div>
+
+        <button onclick="openOnboardingModal()" class="px-4 py-2.5 rounded-xl bg-terracotta text-white text-xs font-bold shadow-clay-btn hover:bg-terracotta-dark transition-all flex items-center gap-1.5">
+          <i data-lucide="user-plus" class="w-4 h-4"></i>
+          <span>Register / Switch</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ================= HERO SECTION WITH REAL CAMPUS PHOTO ================= -->
+  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 pb-6">
+    <div class="bg-white rounded-3xl p-8 sm:p-12 shadow-clay-card border border-white">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+        
+        <div class="lg:col-span-7 space-y-5">
+          <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-clay-100 text-clay-700 text-xs font-bold shadow-clay-card-sm border border-clay-200">
+            <i data-lucide="shield-check" class="w-3.5 h-3.5 text-terracotta"></i>
+            <span>Official Community Portal • Saran, Bihar</span>
+          </div>
+          <h2 class="text-3xl sm:text-5xl font-serif text-clay-900 leading-tight">
+            Alumni, Juniors & <span class="text-teachers italic">Respected Faculty.</span>
+          </h2>
+          <p class="text-clay-700 text-sm sm:text-base leading-relaxed">
+            Switch between the <strong>Alumni & Seniors</strong>, <strong>Junior Students</strong>, and the <strong>Faculty & Teachers Column</strong> to view service years, batch archives, and seek mentorship.
+          </p>
+          <div class="flex flex-wrap gap-3 pt-2">
+            <button onclick="switchSegment('ALUMNI')" class="px-4 py-2.5 rounded-xl bg-terracotta text-white text-xs font-bold shadow-clay-btn hover:bg-terracotta-dark transition-all flex items-center gap-2">
+              <i data-lucide="graduation-cap" class="w-4 h-4"></i> Alumni Segment
+            </button>
+            <button onclick="switchSegment('TEACHER')" class="px-4 py-2.5 rounded-xl bg-teachers text-white text-xs font-bold shadow-clay-btn hover:bg-teachers-dark transition-all flex items-center gap-2">
+              <i data-lucide="award" class="w-4 h-4"></i> Faculty & Teachers
+            </button>
+            <button onclick="switchSegment('JUNIOR')" class="px-4 py-2.5 rounded-xl bg-juniors text-white text-xs font-bold shadow-clay-btn hover:bg-juniors-dark transition-all flex items-center gap-2">
+              <i data-lucide="backpack" class="w-4 h-4"></i> Junior Segment
+            </button>
+          </div>
+        </div>
+
+        <!-- Campus Photo Box with Correct kv.jpg Reference -->
+        <div class="lg:col-span-5">
+          <div class="bg-clay-100 p-4 rounded-3xl shadow-clay-inset border border-clay-200">
+            <div class="relative rounded-2xl overflow-hidden shadow-clay-card aspect-[4/3] bg-clay-200 group">
+              <img src="kv.jpg" alt="Kendriya Vidyalaya Mashrak Campus" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+              <div class="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent flex flex-col justify-end p-4 text-white">
+                <span class="text-[10px] uppercase font-bold tracking-widest text-terracotta-light">Campus Archive</span>
+                <h4 class="text-base font-bold">Kendriya Vidyalaya Mashrak</h4>
+                <p class="text-xs text-clay-200">Saran, Bihar • Est. 2002-2003</p>
+              </div>
+            </div>
+            <div class="mt-3 flex items-center justify-between px-2 text-[11px] text-clay-600 font-medium">
+              <span>Main Academic Block & Assembly Grounds</span>
+              <span class="text-terracotta font-bold flex items-center gap-1">
+                <i data-lucide="map-pin" class="w-3.5 h-3.5"></i> Mashrak Block
+              </span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= 3-WAY SEGMENT SWITCHER & CONTAINER ================= -->
+  <section id="portal-segments" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    
+    <!-- 3 Segment Tabs -->
+    <div class="flex items-center justify-center mb-8">
+      <div class="bg-white p-2 rounded-2xl shadow-clay-card border border-white flex gap-2 w-full max-w-2xl">
+        <button id="tabAlumni" onclick="switchSegment('ALUMNI')" class="segment-tab active-alumni flex-1 py-3 rounded-xl text-xs sm:text-sm font-bold flex items-center justify-center gap-1.5 transition-all">
+          <i data-lucide="graduation-cap" class="w-4 h-4"></i>
+          <span>Alumni & Seniors</span>
+        </button>
+        <button id="tabTeacher" onclick="switchSegment('TEACHER')" class="segment-tab flex-1 py-3 rounded-xl text-xs sm:text-sm font-bold text-clay-600 hover:text-clay-900 flex items-center justify-center gap-1.5 transition-all">
+          <i data-lucide="award" class="w-4 h-4"></i>
+          <span>Respected Faculty</span>
+        </button>
+        <button id="tabJunior" onclick="switchSegment('JUNIOR')" class="segment-tab flex-1 py-3 rounded-xl text-xs sm:text-sm font-bold text-clay-600 hover:text-clay-900 flex items-center justify-center gap-1.5 transition-all">
+          <i data-lucide="backpack" class="w-4 h-4"></i>
+          <span>Junior Students</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- ================= SEGMENT 1: ALUMNI & SENIORS ================= -->
+    <div id="segmentAlumniView" class="space-y-6">
+      <div class="bg-white p-6 rounded-3xl shadow-clay-card border border-white flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <div class="flex items-center space-x-2">
+            <span class="w-3 h-3 rounded-full bg-terracotta"></span>
+            <h3 class="text-xl sm:text-2xl font-bold text-clay-900">Alumni & Senior Batch Folders</h3>
+          </div>
+          <p class="text-xs text-clay-500 mt-1">Class 12th streams, Class 10th graduates, and career paths organized by batch year.</p>
+        </div>
+
+        <div class="flex items-center gap-3">
+          <div class="relative">
+            <i data-lucide="search" class="w-3.5 h-3.5 text-clay-500 absolute left-3 top-3"></i>
+            <input 
+              type="text" 
+              id="seniorSearchInput" 
+              oninput="renderBatchFolders()"
+              placeholder="Search senior or city..." 
+              class="pl-9 pr-3 py-2 bg-clay-50 shadow-clay-inset rounded-xl border border-clay-200 text-xs focus:outline-none w-48 sm:w-56"
+            />
+          </div>
+        </div>
+      </div>
+
+      <div id="batchAccordionContainer" class="space-y-4">
+        <!-- Injected via JS -->
+      </div>
+    </div>
+
+    <!-- ================= SEGMENT 2: RESPECTED TEACHERS & FACULTY ================= -->
+    <div id="segmentTeacherView" class="hidden space-y-6">
+      <div class="bg-white p-6 rounded-3xl shadow-clay-card border border-white flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <div class="flex items-center space-x-2">
+            <span class="w-3 h-3 rounded-full bg-teachers"></span>
+            <h3 class="text-xl sm:text-2xl font-bold text-clay-900">Teachers & Faculty Directory</h3>
+          </div>
+          <p class="text-xs text-clay-500 mt-1">Honoring the respected teachers who guided us through the years at KV Mashrak.</p>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-3">
+          <select id="teacherSubjectFilter" onchange="renderTeachers()" class="px-4 py-2 rounded-xl bg-clay-50 shadow-clay-inset border border-clay-200 text-xs font-semibold text-clay-800 focus:outline-none cursor-pointer">
+            <option value="ALL">All Subjects</option>
+            <option value="Physics">Physics</option>
+            <option value="Mathematics">Mathematics</option>
+            <option value="Biology">Biology</option>
+            <option value="Chemistry">Chemistry</option>
+            <option value="English">English</option>
+            <option value="Hindi">Hindi</option>
+            <option value="Social Science">Social Science</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Teachers Column Grid -->
+      <div id="teachersGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <!-- Injected via JS -->
+      </div>
+    </div>
+
+    <!-- ================= SEGMENT 3: JUNIOR STUDENTS ================= -->
+    <div id="segmentJuniorView" class="hidden space-y-6">
+      <div class="bg-white p-6 rounded-3xl shadow-clay-card border border-white flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <div class="flex items-center space-x-2">
+            <span class="w-3 h-3 rounded-full bg-juniors"></span>
+            <h3 class="text-xl sm:text-2xl font-bold text-clay-900">Junior Students Directory</h3>
+          </div>
+          <p class="text-xs text-clay-500 mt-1">Currently enrolled juniors from Class 6th to Class 11th.</p>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-3">
+          <select id="juniorClassFilter" onchange="renderJuniors()" class="px-4 py-2 rounded-xl bg-clay-50 shadow-clay-inset border border-clay-200 text-xs font-semibold text-clay-800 focus:outline-none cursor-pointer">
+            <option value="ALL">All Classes (6th - 11th)</option>
+            <option value="Class 11">Class 11th</option>
+            <option value="Class 10">Class 10th</option>
+            <option value="Class 9">Class 9th</option>
+            <option value="Class 8">Class 8th</option>
+            <option value="Class 7">Class 7th</option>
+            <option value="Class 6">Class 6th</option>
+          </select>
+        </div>
+      </div>
+
+      <div id="juniorsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <!-- Injected via JS -->
+      </div>
+    </div>
+
+  </section>
+
+  <!-- ================= ABOUT US & LEADERSHIP COUNCIL SECTION ================= -->
+  <section id="leadership-section" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+    <div class="bg-white rounded-3xl p-8 sm:p-12 shadow-clay-card border border-white space-y-10">
+      
+      <!-- About Us Header -->
+      <div id="about-us" class="max-w-3xl space-y-3">
+        <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-clay-100 text-clay-700 text-xs font-bold shadow-clay-card-sm">
+          <i data-lucide="info" class="w-3.5 h-3.5 text-terracotta"></i>
+          <span>About Kendriya Vidyalaya Mashrak Memorial Initiative</span>
+        </div>
+        <h3 class="text-2xl sm:text-4xl font-serif text-clay-900 font-bold">About Our Community & Association</h3>
+        <p class="text-clay-700 text-sm leading-relaxed">
+          Kendriya Vidyalaya Mashrak was established to impart quality education and holistic discipline in Saran, Bihar. This community portal serves as a bridge connecting past alumni batches, respected teachers, and present junior students to foster mentorship, reunions, career guidance, and school nostalgia.
+        </p>
+      </div>
+
+      <!-- Association Leadership Council -->
+      <div>
+        <div class="flex items-center space-x-3 mb-6">
+          <div class="w-9 h-9 rounded-xl bg-terracotta-light text-terracotta flex items-center justify-center shadow-clay-card-sm">
+            <i data-lucide="award" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <h4 class="text-xl font-bold text-clay-900">Alumni Association Leadership Council</h4>
+            <p class="text-xs text-clay-500">Elected & nominated representatives coordinating reunions and community welfare</p>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          
+          <!-- President -->
+          <div class="bg-clay-50 p-5 rounded-3xl shadow-clay-inset border border-clay-200 text-center flex flex-col items-center justify-between">
+            <div class="w-20 h-20 rounded-2xl overflow-hidden shadow-clay-card-sm border-2 border-white mb-3">
+              <img src="chhota bheem.jpeg" alt="President" class="w-full h-full object-cover">
+            </div>
+            <span class="text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-full bg-terracotta text-white mb-2 shadow-sm">President</span>
+            <h5 class="font-bold text-clay-900 text-base">Arpit Kumar Rai (Currently Study)</h5>
+            <p class="text-xs text-terracotta font-semibold">Batch of 2026</p>
+            <p class="text-[11px] text-clay-600 mt-2">Overseeing alumni reunions, community growth, and school coordination.</p>
+          </div>
+
+          <!-- Vice President -->
+          <div class="bg-clay-50 p-5 rounded-3xl shadow-clay-inset border border-clay-200 text-center flex flex-col items-center justify-between">
+            <div class="w-20 h-20 rounded-2xl overflow-hidden shadow-clay-card-sm border-2 border-white mb-3">
+              <img src="kaliaa.jpeg" alt="Vice President" class="w-full h-full object-cover">
+            </div>
+            <span class="text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-full bg-clay-800 text-white mb-2 shadow-sm">Vice President</span>
+            <h5 class="font-bold text-clay-900 text-base">Vaibhav Raj (Currently Study)</h5>
+            <p class="text-xs text-clay-800 font-semibold">Batch of 2026</p>
+            <p class="text-[11px] text-clay-600 mt-2">Managing junior student mentorship programs and career counseling.</p>
+          </div>
+
+          <!-- General Secretary -->
+          <div class="bg-clay-50 p-5 rounded-3xl shadow-clay-inset border border-clay-200 text-center flex flex-col items-center justify-between">
+            <div class="w-20 h-20 rounded-2xl overflow-hidden shadow-clay-card-sm border-2 border-white mb-3">
+              <img src="jagu.jpeg" alt="General Secretary" class="w-full h-full object-cover">
+            </div>
+            <span class="text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-full bg-clay-200 text-clay-800 mb-2">General Secretary</span>
+            <h5 class="font-bold text-clay-900 text-base">Anmol Singh (Currently Study)</h5>
+            <p class="text-xs text-clay-700 font-semibold">Batch of 2026</p>
+            <p class="text-[11px] text-clay-600 mt-2">In charge of communications, event schedules, and annual meetups.</p>
+          </div>
+
+          <!-- Treasurer & Media Coordinator -->
+          <div class="bg-clay-50 p-5 rounded-3xl shadow-clay-inset border border-clay-200 text-center flex flex-col items-center justify-between">
+            <div class="w-20 h-20 rounded-2xl overflow-hidden shadow-clay-card-sm border-2 border-white mb-3">
+              <img src="Raju.jpeg" alt="Media Coordinator" class="w-full h-full object-cover">
+            </div>
+            <span class="text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-full bg-clay-200 text-clay-800 mb-2">Media & Archives</span>
+            <h5 class="font-bold text-clay-900 text-base">Saksham Ojha (Currently Study)</h5>
+            <p class="text-xs text-clay-700 font-semibold">Batch of 2026</p>
+            <p class="text-[11px] text-clay-600 mt-2">Managing Google Cloud Storage photo vault and social feed moderation.</p>
+          </div>
+
+          <div class="bg-clay-50 p-5 rounded-3xl shadow-clay-inset border border-clay-200 text-center flex flex-col items-center justify-between">
+            <div class="w-20 h-20 rounded-2xl overflow-hidden shadow-clay-card-sm border-2 border-white mb-3">
+              <img src="chutki.jpeg" alt="Media Coordinator" class="w-full h-full object-cover">
+            </div>
+
+            <span class="text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-full bg-clay-800 text-white mb-2 shadow-sm">Managing Head(Junnior)</span>
+            <h5 class="font-bold text-clay-900 text-base">Vishal Gupta (Currently Study)</h5>
+            <p class="text-xs text-clay-800 font-semibold">Batch of 2026</p>
+            <p class="text-[11px] text-clay-600 mt-2">Managing junior student mentorship programs and career counseling.</p>
+          </div>
+
+          <div class="bg-clay-50 p-5 rounded-3xl shadow-clay-inset border border-clay-200 text-center flex flex-col items-center justify-between">
+            <div class="w-20 h-20 rounded-2xl overflow-hidden shadow-clay-card-sm border-2 border-white mb-3">
+              <img src="Dholu.jpeg" alt="Media Coordinator" class="w-full h-full object-cover">
+            </div>
+
+            <span class="text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-full bg-clay-800 text-white mb-2 shadow-sm">Deputy Head(Junnior)</span>
+            <h5 class="font-bold text-clay-900 text-base">Vikrant Gupta (Currently Study)</h5>
+            <p class="text-xs text-clay-800 font-semibold">Batch of 2026</p>
+            <p class="text-[11px] text-clay-600 mt-2">Managing junior student mentorship programs and career counseling.</p>
+          </div>
+
+          
+          <div class="bg-clay-50 p-5 rounded-3xl shadow-clay-inset border border-clay-200 text-center flex flex-col items-center justify-between">
+            <div class="w-20 h-20 rounded-2xl overflow-hidden shadow-clay-card-sm border-2 border-white mb-3">
+              <img src="Bholu.jpeg" alt="Media Coordinator" class="w-full h-full object-cover">
+            </div>
+
+            <span class="text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-full bg-clay-800 text-white mb-2 shadow-sm">Assistant Head(Junnior)</span>
+            <h5 class="font-bold text-clay-900 text-base">Abhijit Giri (Currently Study)</h5>
+            <p class="text-xs text-clay-800 font-semibold">Batch of 2026</p>
+            <p class="text-[11px] text-clay-600 mt-2">Managing junior student mentorship programs and career counseling.</p>
+          </div>
+
+          
+          <div class="bg-clay-50 p-5 rounded-3xl shadow-clay-inset border border-clay-200 text-center flex flex-col items-center justify-between">
+            <div class="w-20 h-20 rounded-2xl overflow-hidden shadow-clay-card-sm border-2 border-white mb-3">
+              <img src="indumatti.jpeg" alt="Media Coordinator" class="w-full h-full object-cover">
+            </div>
+
+            <span class="text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-full bg-clay-800 text-white mb-2 shadow-sm">Women Department</span>
+            <h5 class="font-bold text-clay-900 text-base">Aditya Gupta (Currently Study)</h5>
+            <p class="text-xs text-clay-800 font-semibold">Batch of 2026</p>
+            <p class="text-[11px] text-clay-600 mt-2">Managing and counseling program for Womens .</p>
+          </div>
+
+          <div class="bg-clay-50 p-5 rounded-3xl shadow-clay-inset border border-clay-200 text-center flex flex-col items-center justify-between">
+            <div class="w-20 h-20 rounded-2xl overflow-hidden shadow-clay-card-sm border-2 border-white mb-3">
+              <img src="kichak.jpeg" alt="Media Coordinator" class="w-full h-full object-cover">
+            </div>
+
+            <span class="text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-full bg-clay-800 text-white mb-2 shadow-sm">Women Department</span>
+            <h5 class="font-bold text-clay-900 text-base">Ritik Singh (Currently Study)</h5>
+            <p class="text-xs text-clay-800 font-semibold">Batch of 2026</p>
+            <p class="text-[11px] text-clay-600 mt-2">Managing and counseling program for Womens .</p>
+          </div>
+
+
+
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ================= SCHOOL GRAM (INSTAGRAM-STYLE FEED) ================= -->
+  <section id="insta-feed" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
+      <div class="flex items-center space-x-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-yellow-400 via-pink-500 to-purple-600 text-white flex items-center justify-center shadow-clay-card-sm">
+          <i data-lucide="instagram" class="w-5 h-5"></i>
+        </div>
+        <div>
+          <h3 class="text-2xl font-bold text-clay-900">KV Mashrak Gram (Community Feed)</h3>
+          <p class="text-xs text-clay-500">Post photos, like moments, and share memories across all segments</p>
+        </div>
+      </div>
+
+      <button onclick="openInstaPostModal()" class="px-4 py-2 rounded-xl bg-white shadow-clay-card-sm border border-clay-200 text-clay-800 text-xs font-bold hover:bg-clay-50 transition-all flex items-center gap-2">
+        <i data-lucide="plus-square" class="w-4 h-4 text-instaPink"></i>
+        <span>Share a Photo</span>
+      </button>
+    </div>
+
+    <!-- Instagram Cards Grid -->
+    <div id="instaFeedGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      <!-- Injected by JS -->
+    </div>
+  </section>
+
+  <!-- ================= CONTACT US & LOCATION ================= -->
+  <section id="contact-us" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+    <div class="bg-white rounded-3xl p-8 sm:p-12 shadow-clay-card border border-white">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
+        
+        <div class="space-y-6">
+          <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-clay-100 text-clay-700 text-xs font-bold shadow-clay-card-sm">
+            <i data-lucide="map-pin" class="w-3.5 h-3.5 text-terracotta"></i>
+            <span>School Campus & Contact Directory</span>
+          </div>
+
+          <h3 class="text-2xl sm:text-3xl font-bold text-clay-900">Get in Touch with KV Mashrak</h3>
+          <p class="text-clay-700 text-sm leading-relaxed">
+            Have old yearbooks, alumni reunion proposals, or questions for our President / Faculty? Reach out using the contact details or inquiry form.
+          </p>
+
+          <div class="space-y-3 pt-2 text-xs sm:text-sm text-clay-800">
+            <div class="flex items-start space-x-3">
+              <i data-lucide="map" class="w-5 h-5 text-terracotta mt-0.5 shrink-0"></i>
+              <span>Kendriya Vidyalaya Mashrak, Near Block Office, Post: Mashrak, Saran, Bihar — 841417</span>
+            </div>
+            <div class="flex items-center space-x-3">
+              <i data-lucide="mail" class="w-5 h-5 text-terracotta shrink-0"></i>
+              <span>kv_masarak@yahoo.com / alumni.kvmashrak@gmail.com</span>
+            </div>
+            <div class="flex items-center space-x-3">
+              <i data-lucide="phone" class="w-5 h-5 text-terracotta shrink-0"></i>
+              <span>06159-224202 (Campus Line)</span>
+            </div>
+            <div class="flex items-center space-x-3">
+              <i data-lucide="database" class="w-5 h-5 text-terracotta shrink-0"></i>
+              <span class="font-mono text-xs text-clay-500">GCS Bucket: gs://kv-mashrak-archives-store/</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Contact Form -->
+        <div class="bg-clay-100 p-6 sm:p-8 rounded-2xl shadow-clay-inset border border-clay-200">
+          <h4 class="font-bold text-clay-900 text-base mb-4">Send a Message to Council & Teachers</h4>
+          <form onsubmit="handleContactSubmit(event)" class="space-y-3">
+            <div>
+              <label class="block text-[11px] font-bold text-clay-700 mb-1">YOUR NAME</label>
+              <input type="text" required class="w-full px-3 py-2 rounded-xl bg-white shadow-clay-card-sm border border-clay-200 text-xs focus:outline-none text-clay-900" placeholder="Full name">
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="block text-[11px] font-bold text-clay-700 mb-1">SEGMENT</label>
+                <input type="text" required placeholder="Alumni / Student / Faculty" class="w-full px-3 py-2 rounded-xl bg-white shadow-clay-card-sm border border-clay-200 text-xs focus:outline-none text-clay-900">
+              </div>
+              <div>
+                <label class="block text-[11px] font-bold text-clay-700 mb-1">EMAIL / PHONE</label>
+                <input type="text" required placeholder="Contact info" class="w-full px-3 py-2 rounded-xl bg-white shadow-clay-card-sm border border-clay-200 text-xs focus:outline-none text-clay-900">
+              </div>
+            </div>
+            <div>
+              <label class="block text-[11px] font-bold text-clay-700 mb-1">MESSAGE / INQUIRY</label>
+              <textarea rows="2" required class="w-full px-3 py-2 rounded-xl bg-white shadow-clay-card-sm border border-clay-200 text-xs focus:outline-none text-clay-900" placeholder="Your inquiry or suggestion..."></textarea>
+            </div>
+            <button type="submit" class="w-full py-2.5 rounded-xl bg-clay-900 text-white font-bold text-xs shadow-clay-btn hover:bg-black transition-all">
+              Send Message
+            </button>
+          </form>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= 1-ON-1 CHAT DRAWER ================= -->
+  <div id="chatDrawer" class="fixed inset-y-0 right-0 z-50 w-full max-w-md bg-white shadow-2xl border-l border-clay-200 transform translate-x-full transition-transform duration-300 flex flex-col">
+    <div class="p-4 bg-clay-100 border-b border-clay-200 flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <img id="chatUserImg" src="" class="w-10 h-10 rounded-xl object-cover shadow-clay-card-sm border border-white" />
+        <div>
+          <h4 id="chatUserName" class="font-bold text-clay-900 text-sm">Member</h4>
+          <span id="chatUserRole" class="text-[11px] text-terracotta font-semibold">User</span>
+        </div>
+      </div>
+      <div class="flex items-center space-x-2">
+        <button id="chatBlockBtn" onclick="toggleBlockCurrentUser()" class="p-2 rounded-xl text-xs font-bold bg-white text-rose-600 shadow-clay-card-sm border border-clay-200 hover:bg-rose-50 flex items-center gap-1">
+          <i data-lucide="shield-alert" class="w-3.5 h-3.5"></i> <span>Block</span>
+        </button>
+        <button onclick="closeChat()" class="p-2 text-clay-500 hover:text-clay-900">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+    </div>
+
+    <div id="chatMessages" class="flex-1 p-4 overflow-y-auto space-y-3 bg-clay-50">
+      <!-- Chat bubbles -->
+    </div>
+
+    <form id="chatForm" onsubmit="sendChatMessage(event)" class="p-3 bg-white border-t border-clay-200 flex gap-2">
+      <input type="text" id="chatInput" placeholder="Write a message..." class="flex-1 px-4 py-2 bg-clay-50 shadow-clay-inset border border-clay-200 rounded-xl text-xs text-clay-900 focus:outline-none" required />
+      <button type="submit" class="px-4 py-2 bg-terracotta text-white rounded-xl font-bold text-xs shadow-clay-btn hover:bg-terracotta-dark flex items-center justify-center">
+        <i data-lucide="send" class="w-4 h-4"></i>
+      </button>
+    </form>
+  </div>
+
+  <!-- ================= MODAL: SHARE ON SCHOOL GRAM ================= -->
+  <div id="instaPostModal" class="fixed inset-0 z-50 hidden bg-clay-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl p-6 sm:p-8 max-w-lg w-full shadow-clay-card border border-white relative">
+      <div class="flex items-center justify-between pb-3 border-b border-clay-100">
+        <div class="flex items-center gap-2">
+          <i data-lucide="instagram" class="w-5 h-5 text-instaPink"></i>
+          <h3 class="text-lg font-bold text-clay-900">Share to KV Mashrak Gram</h3>
+        </div>
+        <button onclick="closeInstaPostModal()" class="text-clay-400 hover:text-clay-800"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+
+      <form id="instaPostForm" onsubmit="handleInstaPostSubmit(event)" class="space-y-3 mt-4">
+        <div>
+          <label class="block text-xs font-bold text-clay-700 mb-1">YOUR NAME</label>
+          <input type="text" id="postAuthor" required class="w-full px-3 py-2 rounded-xl bg-clay-50 shadow-clay-inset border border-clay-200 text-xs focus:outline-none" placeholder="e.g. Dr. Verma (Faculty) or Aman (Alumni)">
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-clay-700 mb-1">LOCATION / EVENT TAG</label>
+          <input type="text" id="postLocation" required class="w-full px-3 py-2 rounded-xl bg-clay-50 shadow-clay-inset border border-clay-200 text-xs focus:outline-none" placeholder="Assembly Ground / Science Lab / Sports Meet">
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-clay-700 mb-1">PHOTO</label>
+          <input type="file" id="postPhoto" accept="image/*" required class="w-full text-xs text-clay-500 file:mr-3 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-clay-200 file:text-clay-800 cursor-pointer">
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-clay-700 mb-1">CAPTION</label>
+          <textarea id="postCaption" rows="2" class="w-full px-3 py-2 rounded-xl bg-clay-50 shadow-clay-inset border border-clay-200 text-xs focus:outline-none" placeholder="Write a memory caption..."></textarea>
+        </div>
+
+        <div class="pt-2 flex justify-end space-x-2">
+          <button type="button" onclick="closeInstaPostModal()" class="px-3 py-1.5 text-xs font-bold text-clay-600">Cancel</button>
+          <button type="submit" class="px-5 py-2 rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 text-white font-bold text-xs shadow-clay-btn hover:opacity-95 transition-all">
+            Share Photo
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Footer with Disclaimer -->
+  <footer class="border-t border-clay-200 bg-white py-8 mt-12">
+    <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-clay-500">
+      <div class="space-y-1">
+        <p class="font-bold text-clay-800">Kendriya Vidyalaya Mashrak Alumni, Juniors & Teachers Portal</p>
+        <p><strong>Disclaimer:</strong> This platform is not directly affiliated with KV Mashrak administration. It is created solely for bridging connections between teachers and students.</p>
+      </div>
+      <p class="font-medium shrink-0">Clay & White Triple Segment Edition</p>
+    </div>
+  </footer>
+
+  <!-- ================= JAVASCRIPT LOGIC ================= -->
+  <script>
+    // 1. Alumni Seniors Dataset
+    let seniorsData = [];
+
+    // 2. Teachers & Faculty Dataset
+    let teachersData = [];
+
+    // 3. Junior Students Dataset
+    let juniorsData = [];
+
+    // 4. Instagram Feed Dataset with KV Mashrak Default Post
+    let instaFeedData = [
+      {
+        id: 'post-kvm-main',
+        author: 'KV Mashrak Archives',
+        avatar: 'kv.jpg',
+        location: 'Main Academic Building & Assembly Lawns',
+        timeAgo: 'Campus Special',
+        imageUrl: 'kv.jpg',
+        caption: 'The heart of KV Mashrak — lush green grounds, building corridors, and memories under the bright Bihar sun! 🏫☀️',
+        likes: 38,
+        isLiked: false,
+        comments: [
+          { user: 'Chhota Bheem', text: 'Nothing beats our morning assembly memories here!' }
+        ]
+      }
+    ];
+
+    let activeChatMember = null;
+    let chatsStorage = {};
+
+    function updateIcons() {
+      lucide.createIcons();
+    }
+
+    // Modal Triggers
+    function openOnboardingModal() { document.getElementById('firstTimeVisitorModal').classList.remove('hidden'); }
+    function closeOnboardingModal() { document.getElementById('firstTimeVisitorModal').classList.add('hidden'); }
+    function bypassOnboarding() { closeOnboardingModal(); }
+    function openInstaPostModal() { document.getElementById('instaPostModal').classList.remove('hidden'); }
+    function closeInstaPostModal() { document.getElementById('instaPostModal').classList.add('hidden'); }
+
+    // Toggle Form Inputs for Alumni vs Juniors vs Teachers
+    function toggleFormFields() {
+      const segment = document.querySelector('input[name="userSegment"]:checked').value;
+      const alumniFields = document.getElementById('alumniFields');
+      const juniorFields = document.getElementById('juniorFields');
+      const teacherFields = document.getElementById('teacherFields');
+
+      alumniFields.classList.add('hidden');
+      juniorFields.classList.add('hidden');
+      teacherFields.classList.add('hidden');
+
+      if (segment === 'ALUMNI') alumniFields.classList.remove('hidden');
+      else if (segment === 'JUNIOR') juniorFields.classList.remove('hidden');
+      else if (segment === 'TEACHER') teacherFields.classList.remove('hidden');
+    }
+
+    function toggleStreamField() {
+      const classLevel = document.getElementById('obSeniorClassLevel').value;
+      const streamContainer = document.getElementById('streamFieldContainer');
+      streamContainer.style.display = (classLevel === '12') ? 'block' : 'none';
+    }
+
+    // ================= 3-WAY SEGMENT SWITCHER LOGIC =================
+    function switchSegment(segment) {
+      const tabAlumni = document.getElementById('tabAlumni');
+      const tabTeacher = document.getElementById('tabTeacher');
+      const tabJunior = document.getElementById('tabJunior');
+      
+      const alumniView = document.getElementById('segmentAlumniView');
+      const teacherView = document.getElementById('segmentTeacherView');
+      const juniorView = document.getElementById('segmentJuniorView');
+
+      tabAlumni.className = "segment-tab flex-1 py-3 rounded-xl text-xs sm:text-sm font-bold text-clay-600 hover:text-clay-900 flex items-center justify-center gap-1.5 transition-all";
+      tabTeacher.className = "segment-tab flex-1 py-3 rounded-xl text-xs sm:text-sm font-bold text-clay-600 hover:text-clay-900 flex items-center justify-center gap-1.5 transition-all";
+      tabJunior.className = "segment-tab flex-1 py-3 rounded-xl text-xs sm:text-sm font-bold text-clay-600 hover:text-clay-900 flex items-center justify-center gap-1.5 transition-all";
+
+      alumniView.classList.add('hidden');
+      teacherView.classList.add('hidden');
+      juniorView.classList.add('hidden');
+
+      if (segment === 'ALUMNI') {
+        tabAlumni.className = "segment-tab active-alumni flex-1 py-3 rounded-xl text-xs sm:text-sm font-bold flex items-center justify-center gap-1.5 transition-all";
+        alumniView.classList.remove('hidden');
+      } else if (segment === 'TEACHER') {
+        tabTeacher.className = "segment-tab active-teacher flex-1 py-3 rounded-xl text-xs sm:text-sm font-bold flex items-center justify-center gap-1.5 transition-all";
+        teacherView.classList.remove('hidden');
+      } else {
+        tabJunior.className = "segment-tab active-junior flex-1 py-3 rounded-xl text-xs sm:text-sm font-bold flex items-center justify-center gap-1.5 transition-all";
+        juniorView.classList.remove('hidden');
+      }
+    }
+
+    // ================= RENDER TEACHERS COLUMN =================
+    function renderTeachers() {
+      const container = document.getElementById('teachersGrid');
+      const filterVal = document.getElementById('teacherSubjectFilter')?.value || 'ALL';
+
+      const filtered = teachersData.filter(t => (filterVal === 'ALL') || (t.subject.toLowerCase().includes(filterVal.toLowerCase())));
+
+      if (filtered.length === 0) {
+        container.innerHTML = `<div class="col-span-full p-8 text-center bg-white rounded-3xl shadow-clay-card text-clay-500 font-semibold text-xs">No faculty members found for this subject filter.</div>`;
+        return;
+      }
+
+      container.innerHTML = filtered.map(teacher => {
+        if (teacher.isBlocked) {
+          return `
+            <div class="bg-white p-5 rounded-3xl shadow-clay-card border border-rose-100 opacity-60">
+              <div class="flex items-center justify-between text-xs text-rose-500 font-bold">
+                <span>Blocked Faculty Profile</span>
+                <button onclick="unblockMember(${teacher.id}, 'TEACHER')" class="text-teachers hover:underline">Unblock</button>
+              </div>
+            </div>
+          `;
+        }
+
+        return `
+          <div class="bg-white p-5 rounded-3xl shadow-clay-card border border-white flex flex-col justify-between hover:shadow-lg transition-all">
+            <div>
+              <div class="flex items-start justify-between">
+                <div class="flex items-center space-x-3.5">
+                  <img src="${teacher.imageUrl}" alt="${teacher.name}" class="w-14 h-14 rounded-2xl object-cover shadow-clay-card-sm border border-clay-100" />
+                  <div>
+                    <h5 class="font-bold text-clay-900 text-sm sm:text-base">${teacher.name}</h5>
+                    <p class="text-xs text-teachers font-bold">${teacher.role}</p>
+                    <span class="text-[10px] px-2 py-0.5 rounded bg-teachers-light text-teachers-dark font-bold inline-block mt-0.5">${teacher.contractType}</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="mt-4 pt-3 border-t border-clay-100 flex items-center justify-between text-xs">
+                <span class="text-clay-500 font-medium">Service Period:</span>
+                <span class="font-bold text-clay-800 bg-clay-100 px-2.5 py-1 rounded-lg shadow-clay-inset">${teacher.serviceFrom} — ${teacher.serviceTo}</span>
+              </div>
+
+              <div class="mt-2 text-xs space-y-1 text-clay-700">
+                <p><span class="font-bold text-clay-900">Subject:</span> ${teacher.subject}</p>
+                <p class="flex items-center gap-1.5"><i data-lucide="phone-call" class="w-3.5 h-3.5 text-teachers"></i> ${teacher.contact}</p>
+              </div>
+
+              <div class="mt-3 pt-2 border-t border-clay-100">
+                <p class="text-xs text-clay-600 italic">"${teacher.quote}"</p>
+              </div>
+            </div>
+
+            <div class="mt-4 pt-3 border-t border-clay-100 flex items-center justify-between">
+              <button onclick="openChat(${teacher.id}, 'TEACHER')" class="px-3.5 py-1.5 rounded-xl bg-teachers text-white text-xs font-bold shadow-clay-btn hover:bg-teachers-dark flex items-center gap-1.5">
+                <i data-lucide="message-circle" class="w-3.5 h-3.5"></i> Message Faculty
+              </button>
+              <button onclick="blockMember(${teacher.id}, 'TEACHER')" class="text-xs text-clay-400 hover:text-rose-600 font-medium flex items-center gap-1">
+                <i data-lucide="ban" class="w-3 h-3"></i> Block
+              </button>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      updateIcons();
+    }
+
+    // ================= RENDER BATCH ACCORDION (ALUMNI SEGMENT) =================
+    function renderBatchFolders() {
+      const container = document.getElementById('batchAccordionContainer');
+      const searchVal = (document.getElementById('seniorSearchInput')?.value || '').toLowerCase();
+
+      const filtered = seniorsData.filter(s => 
+        s.name.toLowerCase().includes(searchVal) || 
+        s.city.toLowerCase().includes(searchVal) || 
+        s.role.toLowerCase().includes(searchVal)
+      );
+
+      const batchesMap = {};
+      filtered.forEach(senior => {
+        if (!batchesMap[senior.batch]) batchesMap[senior.batch] = [];
+        batchesMap[senior.batch].push(senior);
+      });
+
+      const sortedBatches = Object.keys(batchesMap).sort((a, b) => b - a);
+
+      if (sortedBatches.length === 0) {
+        container.innerHTML = `<div class="p-8 text-center bg-white rounded-3xl shadow-clay-card text-clay-500 font-semibold text-xs">No alumni records found.</div>`;
+        return;
+      }
+
+      container.innerHTML = sortedBatches.map((batchYear, index) => {
+        const seniorsInBatch = batchesMap[batchYear];
+        const isOpen = index === 0;
+
+        return `
+          <div class="bg-white rounded-3xl shadow-clay-card border border-white overflow-hidden">
+            <button onclick="toggleFolder('folder-${batchYear}')" class="w-full px-6 py-4 flex items-center justify-between bg-clay-50 hover:bg-white transition-colors">
+              <div class="flex items-center space-x-3.5">
+                <div class="w-10 h-10 rounded-2xl bg-white shadow-clay-card-sm flex items-center justify-center text-terracotta">
+                  <i data-lucide="folder" class="w-5 h-5"></i>
+                </div>
+                <div class="text-left">
+                  <h4 class="font-bold text-clay-900 text-base">Batch of ${batchYear}</h4>
+                  <p class="text-xs text-clay-500">${seniorsInBatch.length} Enrolled Senior(s)</p>
+                </div>
+              </div>
+              <div class="flex items-center space-x-2">
+                <span class="text-xs font-bold px-3 py-1 rounded-full bg-terracotta-light text-terracotta">Senior Folder</span>
+                <i data-lucide="chevron-down" id="icon-folder-${batchYear}" class="w-5 h-5 text-clay-400 transition-transform ${isOpen ? 'rotate-180' : ''}"></i>
+              </div>
+            </button>
+
+            <div id="folder-${batchYear}" class="${isOpen ? 'block' : 'hidden'} p-6 border-t border-clay-100 bg-clay-50/50">
+              <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                ${seniorsInBatch.map(s => renderSeniorCard(s)).join('')}
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      updateIcons();
+    }
+
+    function toggleFolder(folderId) {
+      const folder = document.getElementById(folderId);
+      const icon = document.getElementById(`icon-${folderId}`);
+      if (folder.classList.contains('hidden')) {
+        folder.classList.remove('hidden');
+        if (icon) icon.classList.add('rotate-180');
+      } else {
+        folder.classList.add('hidden');
+        if (icon) icon.classList.remove('rotate-180');
+      }
+    }
+
+    function renderSeniorCard(senior) {
+      if (senior.isBlocked) {
+        return `
+          <div class="bg-white p-5 rounded-3xl shadow-clay-card border border-rose-100 opacity-60">
+            <div class="flex items-center justify-between text-xs text-rose-500 font-bold">
+              <span>Blocked Senior Profile</span>
+              <button onclick="unblockMember(${senior.id}, 'ALUMNI')" class="text-terracotta hover:underline">Unblock</button>
+            </div>
+          </div>
+        `;
+      }
+
+      return `
+        <div class="bg-white p-5 rounded-3xl shadow-clay-card border border-white flex flex-col justify-between hover:shadow-lg transition-all">
+          <div>
+            <div class="flex items-start justify-between">
+              <div class="flex items-center space-x-3.5">
+                <img src="${senior.imageUrl}" alt="${senior.name}" class="w-14 h-14 rounded-2xl object-cover shadow-clay-card-sm border border-clay-100" />
+                <div>
+                  <h5 class="font-bold text-clay-900 text-sm sm:text-base">${senior.name}</h5>
+                  <p class="text-xs text-terracotta font-semibold">${senior.role}</p>
+                  <p class="text-[11px] text-clay-500 flex items-center gap-1 mt-0.5">
+                    <i data-lucide="map-pin" class="w-3 h-3 text-clay-400"></i> ${senior.city}
+                  </p>
+                </div>
+              </div>
+              <span class="text-xs px-2.5 py-1 rounded-full bg-clay-100 font-bold text-clay-700 shadow-clay-inset">
+                '${senior.batch.toString().slice(-2)}
+              </span>
+            </div>
+
+            <div class="mt-4 pt-3 border-t border-clay-100">
+              <span class="text-[11px] px-2.5 py-1 rounded-lg bg-clay-50 text-clay-700 font-semibold inline-block mb-2">
+                ${senior.classStream}
+              </span>
+              <p class="text-xs text-clay-600 italic">
+                "${senior.quote}"
+              </p>
+            </div>
+          </div>
+
+          <div class="mt-4 pt-3 border-t border-clay-100 flex items-center justify-between">
+            <button onclick="openChat(${senior.id}, 'ALUMNI')" class="px-3.5 py-1.5 rounded-xl bg-terracotta text-white text-xs font-bold shadow-clay-btn hover:bg-terracotta-dark flex items-center gap-1.5">
+              <i data-lucide="message-circle" class="w-3.5 h-3.5"></i> Chat
+            </button>
+            <button onclick="blockMember(${senior.id}, 'ALUMNI')" class="text-xs text-clay-400 hover:text-rose-600 font-medium flex items-center gap-1">
+              <i data-lucide="ban" class="w-3 h-3"></i> Block
+            </button>
+          </div>
+        </div>
+      `;
+    }
+
+    // ================= RENDER JUNIORS (JUNIOR SEGMENT) =================
+    function renderJuniors() {
+      const container = document.getElementById('juniorsGrid');
+      const filterVal = document.getElementById('juniorClassFilter')?.value || 'ALL';
+
+      const filtered = juniorsData.filter(j => (filterVal === 'ALL') || (j.classLevel === filterVal));
+
+      if (filtered.length === 0) {
+        container.innerHTML = `<div class="col-span-full p-8 text-center bg-white rounded-3xl shadow-clay-card text-clay-500 font-semibold text-xs">No junior students registered in this class yet.</div>`;
+        return;
+      }
+
+      container.innerHTML = filtered.map(junior => {
+        if (junior.isBlocked) {
+          return `
+            <div class="bg-white p-5 rounded-3xl shadow-clay-card border border-rose-100 opacity-60">
+              <div class="flex items-center justify-between text-xs text-rose-500 font-bold">
+                <span>Blocked Junior Student</span>
+                <button onclick="unblockMember(${junior.id}, 'JUNIOR')" class="text-juniors hover:underline">Unblock</button>
+              </div>
+            </div>
+          `;
+        }
+
+        return `
+          <div class="bg-white p-5 rounded-3xl shadow-clay-card border border-white flex flex-col justify-between hover:shadow-lg transition-all">
+            <div>
+              <div class="flex items-start justify-between">
+                <div class="flex items-center space-x-3.5">
+                  <img src="${junior.imageUrl}" alt="${junior.name}" class="w-14 h-14 rounded-2xl object-cover shadow-clay-card-sm border border-clay-100" />
+                  <div>
+                    <h5 class="font-bold text-clay-900 text-sm sm:text-base">${junior.name}</h5>
+                    <p class="text-xs text-juniors font-semibold">${junior.classLevel} (${junior.section})</p>
+                    <p class="text-[11px] text-clay-500 mt-0.5">Goal: ${junior.goal}</p>
+                  </div>
+                </div>
+                <span class="text-xs px-2.5 py-1 rounded-full bg-juniors-light font-bold text-juniors">
+                  Junior
+                </span>
+              </div>
+
+              <div class="mt-4 pt-3 border-t border-clay-100">
+                <p class="text-xs text-clay-600 italic">
+                  "${junior.quote}"
+                </p>
+              </div>
+            </div>
+
+            <div class="mt-4 pt-3 border-t border-clay-100 flex items-center justify-between">
+              <button onclick="openChat(${junior.id}, 'JUNIOR')" class="px-3.5 py-1.5 rounded-xl bg-juniors text-white text-xs font-bold shadow-clay-btn hover:bg-juniors-dark flex items-center gap-1.5">
+                <i data-lucide="message-circle" class="w-3.5 h-3.5"></i> Chat
+              </button>
+              <button onclick="blockMember(${junior.id}, 'JUNIOR')" class="text-xs text-clay-400 hover:text-rose-600 font-medium flex items-center gap-1">
+                <i data-lucide="ban" class="w-3 h-3"></i> Block
+              </button>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      updateIcons();
+    }
+
+    // ================= RENDER INSTAGRAM FEED =================
+    function renderInstaFeed() {
+      const container = document.getElementById('instaFeedGrid');
+      container.innerHTML = instaFeedData.map(post => `
+        <div class="bg-white rounded-3xl shadow-clay-card border border-white overflow-hidden flex flex-col justify-between">
+          <div class="p-4 flex items-center justify-between border-b border-clay-100">
+            <div class="flex items-center space-x-3">
+              <img src="${post.avatar}" class="w-9 h-9 rounded-full object-cover p-[2px] bg-gradient-to-tr from-yellow-400 to-pink-600" />
+              <div>
+                <h4 class="font-bold text-xs text-clay-900">${post.author}</h4>
+                <p class="text-[10px] text-clay-500">${post.location}</p>
+              </div>
+            </div>
+            <span class="text-[10px] text-clay-400 font-medium">${post.timeAgo}</span>
+          </div>
+
+          <div class="relative aspect-square bg-clay-100 cursor-pointer overflow-hidden group" ondblclick="toggleLikePost('${post.id}')">
+            <img src="${post.imageUrl}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+            <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 bg-black/10 transition-opacity">
+              <span class="text-[11px] text-white bg-black/60 px-3 py-1 rounded-full backdrop-blur-sm">Double tap to like ❤️</span>
+            </div>
+          </div>
+
+          <div class="p-4 space-y-2">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center space-x-3">
+                <button onclick="toggleLikePost('${post.id}')" class="transition-transform active:scale-125">
+                  <i data-lucide="heart" class="w-5 h-5 ${post.isLiked ? 'text-rose-500 fill-rose-500' : 'text-clay-700'}"></i>
+                </button>
+              </div>
+              <span class="text-xs font-bold text-clay-800">${post.likes} Likes</span>
+            </div>
+
+            <p class="text-xs text-clay-800 leading-relaxed">
+              <span class="font-bold text-clay-900">${post.author.split(' ')[0]}:</span> ${post.caption}
+            </p>
+
+            <div class="space-y-1 pt-2 border-t border-clay-100 text-[11px] text-clay-700">
+              ${post.comments.map(c => `<p><span class="font-bold text-clay-900">${c.user}:</span> ${c.text}</p>`).join('')}
+            </div>
+
+            <form onsubmit="handleAddComment(event, '${post.id}')" class="pt-2 flex items-center gap-2">
+              <input type="text" id="comment-input-${post.id}" placeholder="Add a comment..." class="flex-1 px-3 py-1.5 rounded-xl bg-clay-50 shadow-clay-inset border border-clay-200 text-xs focus:outline-none" required />
+              <button type="submit" class="text-xs font-bold text-instaPink hover:underline">Post</button>
+            </form>
+          </div>
+        </div>
+      `).join('');
+
+      updateIcons();
+    }
+
+    function toggleLikePost(postId) {
+      const post = instaFeedData.find(p => p.id === postId);
+      if (post) {
+        post.isLiked = !post.isLiked;
+        post.likes += post.isLiked ? 1 : -1;
+        renderInstaFeed();
+      }
+    }
+
+    function handleAddComment(e, postId) {
+      e.preventDefault();
+      const input = document.getElementById(`comment-input-${postId}`);
+      const text = input.value.trim();
+      const post = instaFeedData.find(p => p.id === postId);
+
+      if (post && text) {
+        const saved = localStorage.getItem('kvm_registered_user');
+        const userName = saved ? JSON.parse(saved).name : "KV Member";
+        post.comments.push({ user: userName, text });
+        renderInstaFeed();
+      }
+    }
+
+    // ================= CHAT & BLOCK SYSTEM =================
+    function openChat(id, type) {
+      let member = null;
+      if (type === 'ALUMNI') member = seniorsData.find(m => m.id === id);
+      else if (type === 'TEACHER') member = teachersData.find(m => m.id === id);
+      else member = juniorsData.find(m => m.id === id);
+
+      if (!member) return;
+
+      activeChatMember = { ...member, userType: type };
+      document.getElementById('chatUserName').innerText = member.name;
+      document.getElementById('chatUserRole').innerText = (type === 'TEACHER') ? `${member.role} (${member.subject})` : (type === 'ALUMNI') ? `Batch ${member.batch}` : `${member.classLevel} Student`;
+      document.getElementById('chatUserImg').src = member.imageUrl;
+
+      renderChatMessages();
+      document.getElementById('chatDrawer').classList.remove('translate-x-full');
+      updateIcons();
+    }
+
+    function closeChat() {
+      document.getElementById('chatDrawer').classList.add('translate-x-full');
+      activeChatMember = null;
+    }
+
+    function renderChatMessages() {
+      if (!activeChatMember) return;
+      const box = document.getElementById('chatMessages');
+      const thread = chatsStorage[activeChatMember.id] || [
+        { sender: 'them', text: `Pranam / Hello! I am ${activeChatMember.name} from KV Mashrak.` }
+      ];
+
+      box.innerHTML = thread.map(msg => `
+        <div class="flex ${msg.sender === 'me' ? 'justify-end' : 'justify-start'}">
+          <div class="max-w-[80%] p-3 rounded-2xl text-xs ${msg.sender === 'me' ? 'bg-terracotta text-white shadow-clay-btn' : 'bg-white text-clay-900 shadow-clay-card-sm border border-clay-100'}">
+            ${msg.text}
+          </div>
+        </div>
+      `).join('');
+
+      box.scrollTop = box.scrollHeight;
+    }
+
+    function sendChatMessage(e) {
+      e.preventDefault();
+      if (!activeChatMember) return;
+      const input = document.getElementById('chatInput');
+      const text = input.value.trim();
+      if (!text) return;
+
+      if (!chatsStorage[activeChatMember.id]) {
+        chatsStorage[activeChatMember.id] = [
+          { sender: 'them', text: `Pranam / Hello! I am ${activeChatMember.name} from KV Mashrak.` }
+        ];
+      }
+
+      chatsStorage[activeChatMember.id].push({ sender: 'me', text });
+      input.value = '';
+      renderChatMessages();
+    }
+
+    function blockMember(id, type) {
+      let member = null;
+      if (type === 'ALUMNI') member = seniorsData.find(m => m.id === id);
+      else if (type === 'TEACHER') member = teachersData.find(m => m.id === id);
+      else member = juniorsData.find(m => m.id === id);
+
+      if (member && confirm(`Are you sure you want to block ${member.name}?`)) {
+        member.isBlocked = true;
+        if (type === 'ALUMNI') renderBatchFolders();
+        else if (type === 'TEACHER') renderTeachers();
+        else renderJuniors();
+        if (activeChatMember && activeChatMember.id === id) closeChat();
+      }
+    }
+
+    function unblockMember(id, type) {
+      let member = null;
+      if (type === 'ALUMNI') member = seniorsData.find(m => m.id === id);
+      else if (type === 'TEACHER') member = teachersData.find(m => m.id === id);
+      else member = juniorsData.find(m => m.id === id);
+
+      if (member) {
+        member.isBlocked = false;
+        if (type === 'ALUMNI') renderBatchFolders();
+        else if (type === 'TEACHER') renderTeachers();
+        else renderJuniors();
+      }
+    }
+
+    function toggleBlockCurrentUser() {
+      if (activeChatMember) blockMember(activeChatMember.id, activeChatMember.userType);
+    }
+
+    // File Upload Helper
+    async function uploadToGCS(file) {
+      return new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onload = (e) => resolve(e.target.result);
+        reader.readAsDataURL(file);
+      });
+    }
+
+    // ================= ONBOARDING FORM SUBMIT =================
+    async function handleOnboardingSubmit(e) {
+      e.preventDefault();
+      const segment = document.querySelector('input[name="userSegment"]:checked').value;
+      const name = document.getElementById('obName').value;
+      const quote = document.getElementById('obQuote').value || "Proud to be part of KV Mashrak.";
+      const photoInput = document.getElementById('obPhoto');
+
+      let imageUrl = "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=400&q=80";
+      if (photoInput.files.length > 0) {
+        imageUrl = await uploadToGCS(photoInput.files[0]);
+      }
+
+      if (segment === 'ALUMNI') {
+        const classLevel = document.getElementById('obSeniorClassLevel').value;
+        const batch = document.getElementById('obBatch').value || '2024';
+        const role = document.getElementById('obSeniorRole').value || 'KV Mashrak Alumnus';
+        const city = document.getElementById('obSeniorCity').value || 'Mashrak, Bihar';
+
+        let classStream = "Class 10 - Standard";
+        if (classLevel === "12") {
+          classStream = `Class 12 - ${document.getElementById('obSeniorStream').value}`;
+        }
+
+        seniorsData.unshift({
+          id: seniorsData.length + 1,
+          name,
+          batch,
+          classStream,
+          role,
+          city,
+          quote,
+          imageUrl,
+          isBlocked: false
+        });
+
+        renderBatchFolders();
+        switchSegment('ALUMNI');
+        showUserBadge(name, `Alumni '` + batch.slice(-2));
+      } 
+      else if (segment === 'TEACHER') {
+        const role = document.getElementById('obTeacherRole').value;
+        const subject = document.getElementById('obTeacherSubject').value || 'General';
+        const serviceFrom = document.getElementById('obTeacherFrom').value || '2015';
+        const serviceTo = document.getElementById('obTeacherTo').value || 'Present';
+        const contractType = document.getElementById('obTeacherContractType').value;
+        const contact = document.getElementById('obTeacherContact').value || 'Available upon request';
+
+        teachersData.unshift({
+          id: teachersData.length + 500,
+          name,
+          role,
+          subject,
+          serviceFrom,
+          serviceTo,
+          contractType,
+          contact,
+          quote,
+          imageUrl,
+          isBlocked: false
+        });
+
+        renderTeachers();
+        switchSegment('TEACHER');
+        showUserBadge(name, `Faculty (${subject})`);
+      }
+      else {
+        const classLevel = document.getElementById('obJuniorClass').value;
+        const section = document.getElementById('obJuniorSection').value || 'Section A';
+        const goal = document.getElementById('obJuniorGoal').value || 'Student';
+
+        juniorsData.unshift({
+          id: juniorsData.length + 100,
+          name,
+          classLevel,
+          section,
+          goal,
+          quote,
+          imageUrl,
+          isBlocked: false
+        });
+
+        renderJuniors();
+        switchSegment('JUNIOR');
+        showUserBadge(name, `Junior (${classLevel})`);
+      }
+
+      localStorage.setItem('kvm_registered_user', JSON.stringify({ name, segment }));
+      closeOnboardingModal();
+    }
+
+    function showUserBadge(name, tag) {
+      const badge = document.getElementById('userBadge');
+      document.getElementById('userBadgeName').innerText = name.split(' ')[0];
+      document.getElementById('userBadgeTag').innerText = tag;
+      badge.classList.remove('hidden');
+      badge.classList.add('flex');
+    }
+
+    // Share Photo to School Gram
+    async function handleInstaPostSubmit(e) {
+      e.preventDefault();
+      const author = document.getElementById('postAuthor').value;
+      const location = document.getElementById('postLocation').value;
+      const caption = document.getElementById('postCaption').value;
+      const fileInput = document.getElementById('postPhoto');
+
+      let imageUrl = "https://images.unsplash.com/photo-1523580494863-6f3031224c94?auto=format&fit=crop&w=900&q=80";
+      if (fileInput.files.length > 0) {
+        imageUrl = await uploadToGCS(fileInput.files[0]);
+      }
+
+      instaFeedData.unshift({
+        id: `post-${Date.now()}`,
+        author,
+        avatar: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=150&q=80",
+        location,
+        timeAgo: "Just now",
+        imageUrl,
+        caption,
+        likes: 1,
+        isLiked: true,
+        comments: []
+      });
+
+      renderInstaFeed();
+      closeInstaPostModal();
+      document.getElementById('instaPostForm').reset();
+    }
+
+    function handleContactSubmit(e) {
+      e.preventDefault();
+      alert("Thank you! Your message has been sent to the KV Mashrak Council & Faculty Cell.");
+      e.target.reset();
+    }
+
+    // Page Load Boot
+    document.addEventListener('DOMContentLoaded', () => {
+      renderBatchFolders();
+      renderTeachers();
+      renderJuniors();
+      renderInstaFeed();
+      updateIcons();
+
+      const saved = localStorage.getItem('kvm_registered_user');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        showUserBadge(parsed.name, parsed.segment || 'Member');
+        closeOnboardingModal();
+      } else {
+        openOnboardingModal();
+      }
+    });
+  </script>
+</body>
+</html>
